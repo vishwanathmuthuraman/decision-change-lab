@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "EXAMPLE-SUPPLIER-HOLD-001",
+  "status": "specified_not_measured",
+  "strategy": "selective",
+  "schedule": "canonical",
+  "at_horizon": "2026-01-15T08:20:00Z",
+  "decisions": [
+    {
+      "decision_id": "DEC-A",
+      "status": "on_hold",
+      "successful_executions": 0,
+      "open_investigations": 0,
+      "reason_codes": [
+        "SUPPLIER_ON_HOLD"
+      ]
+    },
+    {
+      "decision_id": "DEC-B",
+      "status": "committed",
+      "successful_executions": 1,
+      "open_investigations": 0,
+      "reason_codes": []
+    },
+    {
+      "decision_id": "DEC-C",
+      "status": "committed",
+      "successful_executions": 1,
+      "open_investigations": 1,
+      "reason_codes": [
+        "OPEN_ORDER_SUPPLIER_HOLD"
+      ]
+    }
+  ],
+  "assertions": {
+    "total_successful_executions": 2,
+    "total_open_investigations": 1,
+    "unaffected_decision_escalations": 0,
+    "duplicate_dispatch_additional_executions": 0,
+    "completed_decisions_reversed": 0,
+    "future_fact_used_before_observation": false
+  },
+  "required_evidence_refs": [
+    "E-SUP-A-1",
+    "E-SUP-A-2",
+    "APR-A",
+    "APR-C",
+    "DISPATCH-C-1",
+    "DISPATCH-B-1"
+  ]
+}

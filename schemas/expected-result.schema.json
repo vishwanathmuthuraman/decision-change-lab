@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Specified expected result for a Decision Change Lab example",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "const": "specified_not_measured"
+    },
+    "strategy": {
+      "enum": [
+        "cached",
+        "expiry",
+        "full",
+        "selective"
+      ]
+    },
+    "schedule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "at_horizon": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "decisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "decision_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "approved",
+              "on_hold",
+              "committed",
+              "cancelled"
+            ]
+          },
+          "successful_executions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "open_investigations": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason_codes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "decision_id",
+          "status",
+          "successful_executions",
+          "open_investigations",
+          "reason_codes"
+        ]
+      }
+    },
+    "assertions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "total_successful_executions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_open_investigations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unaffected_decision_escalations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "duplicate_dispatch_additional_executions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "completed_decisions_reversed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "future_fact_used_before_observation": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "total_successful_executions",
+        "total_open_investigations",
+        "unaffected_decision_escalations",
+        "duplicate_dispatch_additional_executions",
+        "completed_decisions_reversed",
+        "future_fact_used_before_observation"
+      ]
+    },
+    "required_evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "status",
+    "strategy",
+    "schedule",
+    "at_horizon",
+    "decisions",
+    "assertions",
+    "required_evidence_refs"
+  ]
+}

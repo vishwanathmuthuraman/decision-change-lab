@@ -1,0 +1,40 @@
+# Python and local environments
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+build/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Credentials and private material
+.env
+.env.*
+!.env.example
+private/
+secrets/
+*.pem
+*.key
+
+# Generated runs, raw imports, local databases, and caches
+reports/
+artifacts/
+rawdata/
+raw_data/
+data/raw/
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.log
+.cache/
+.DS_Store

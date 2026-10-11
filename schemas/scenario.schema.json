@@ -1,0 +1,649 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Decision Change Lab scenario shape v1",
+  "description": "Proposed original synthetic fixture contract. Structural validation must be followed by semantic reference, time, version, and business-rule checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "template_group_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "partition": {
+      "enum": [
+        "example",
+        "dev",
+        "test"
+      ]
+    },
+    "family": {
+      "enum": [
+        "supplier_status",
+        "price_quantity",
+        "contract_policy",
+        "approval_authority",
+        "temporal_corrections"
+      ]
+    },
+    "currency": {
+      "const": "USD"
+    },
+    "start_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "horizon_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/actor"
+      },
+      "minItems": 1
+    },
+    "policy": {
+      "$ref": "#/$defs/policy"
+    },
+    "initial_facts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/event"
+      },
+      "minItems": 1
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      },
+      "minItems": 1
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/event"
+      },
+      "minItems": 0
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "template_group_id",
+    "partition",
+    "family",
+    "currency",
+    "start_at",
+    "horizon_at",
+    "actors",
+    "policy",
+    "initial_facts",
+    "decisions",
+    "changes",
+    "actions"
+  ],
+  "$defs": {
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "role": {
+          "const": "procurement_reviewer"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "actor_id",
+        "source_version",
+        "role",
+        "active"
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_amendment_total_minor": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "allow_benign_revalidation": {
+          "type": "boolean"
+        },
+        "investigate_open_orders_on_supplier_hold": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "policy_id",
+        "source_version",
+        "max_amendment_total_minor",
+        "allow_benign_revalidation",
+        "investigate_open_orders_on_supplier_hold"
+      ]
+    },
+    "supplierPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "active",
+            "on_hold"
+          ]
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "status",
+        "display_name"
+      ]
+    },
+    "contractPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "supplier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_quantity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_unit_price_minor": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        }
+      },
+      "required": [
+        "supplier_id",
+        "max_quantity",
+        "max_unit_price_minor"
+      ]
+    },
+    "orderPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "supplier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unit_price_minor": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "status": {
+          "enum": [
+            "open",
+            "closed",
+            "cancelled"
+          ]
+        }
+      },
+      "required": [
+        "supplier_id",
+        "contract_id",
+        "quantity",
+        "unit_price_minor",
+        "status"
+      ]
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entity_kind": {
+          "enum": [
+            "supplier",
+            "contract",
+            "order",
+            "policy",
+            "actor"
+          ]
+        },
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "field_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "origin": {
+          "enum": [
+            "supplied_reference",
+            "agent_extracted"
+          ]
+        }
+      },
+      "required": [
+        "entity_kind",
+        "entity_id",
+        "field_path",
+        "source_version",
+        "origin"
+      ]
+    },
+    "amendment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supplier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "unit_price_minor": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "requested_delivery_date": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": [
+        "order_id",
+        "supplier_id",
+        "contract_id",
+        "quantity",
+        "unit_price_minor",
+        "requested_delivery_date"
+      ]
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "approval_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "granted_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+        },
+        "policy_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "approval_id",
+        "actor_id",
+        "granted_at",
+        "valid_until",
+        "policy_id",
+        "policy_version"
+      ]
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+        },
+        "initial_status": {
+          "const": "approved"
+        },
+        "open_obligation": {
+          "type": "boolean"
+        },
+        "amendment": {
+          "$ref": "#/$defs/amendment"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dependency"
+          },
+          "minItems": 1
+        },
+        "approval_seed": {
+          "$ref": "#/$defs/approval"
+        }
+      },
+      "required": [
+        "decision_id",
+        "revision",
+        "created_at",
+        "initial_status",
+        "open_obligation",
+        "amendment",
+        "dependencies",
+        "approval_seed"
+      ]
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_kind": {
+          "enum": [
+            "supplier",
+            "contract",
+            "order",
+            "policy",
+            "actor"
+          ]
+        },
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+        },
+        "payload": {
+          "type": "object"
+        },
+        "effective_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "supersedes_source_version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      },
+      "required": [
+        "event_id",
+        "source_id",
+        "source_event_id",
+        "entity_kind",
+        "entity_id",
+        "source_version",
+        "effective_at",
+        "observed_at",
+        "payload"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "entity_kind": {
+                "const": "supplier"
+              }
+            },
+            "required": [
+              "entity_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/supplierPayload"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "entity_kind": {
+                "const": "contract"
+              }
+            },
+            "required": [
+              "entity_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/contractPayload"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "entity_kind": {
+                "const": "order"
+              }
+            },
+            "required": [
+              "entity_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/orderPayload"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "entity_kind": {
+                "const": "policy"
+              }
+            },
+            "required": [
+              "entity_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/policy"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "entity_kind": {
+                "const": "actor"
+              }
+            },
+            "required": [
+              "entity_kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/actor"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "action": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sequence": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "at": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+            },
+            "type": {
+              "const": "dispatch"
+            },
+            "decision_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "idempotency_key": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "sequence",
+            "at",
+            "type",
+            "decision_id",
+            "idempotency_key"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sequence": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "at": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+            },
+            "type": {
+              "enum": [
+                "ingest_change",
+                "deliver_notification"
+              ]
+            },
+            "event_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "sequence",
+            "at",
+            "type",
+            "event_id"
+          ]
+        }
+      ]
+    }
+  }
+}

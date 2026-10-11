@@ -1,0 +1,376 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "EXAMPLE-SUPPLIER-HOLD-001",
+  "template_group_id": "EXAMPLE-SUPPLIER-HOLD",
+  "partition": "example",
+  "family": "supplier_status",
+  "currency": "USD",
+  "start_at": "2026-01-15T08:00:00Z",
+  "horizon_at": "2026-01-15T08:20:00Z",
+  "actors": [
+    {
+      "actor_id": "REVIEWER-1",
+      "source_version": 1,
+      "role": "procurement_reviewer",
+      "active": true
+    }
+  ],
+  "policy": {
+    "policy_id": "POL-1",
+    "source_version": 1,
+    "max_amendment_total_minor": 150000,
+    "allow_benign_revalidation": true,
+    "investigate_open_orders_on_supplier_hold": true
+  },
+  "initial_facts": [
+    {
+      "event_id": "E-SUP-A-1",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-SUP-A-1",
+      "entity_kind": "supplier",
+      "entity_id": "SUP-A",
+      "source_version": 1,
+      "effective_at": "2026-01-15T08:00:00Z",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "status": "active",
+        "display_name": "Synthetic Supplier A"
+      }
+    },
+    {
+      "event_id": "E-SUP-B-1",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-SUP-B-1",
+      "entity_kind": "supplier",
+      "entity_id": "SUP-B",
+      "source_version": 1,
+      "effective_at": "2026-01-15T08:00:00Z",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "status": "active",
+        "display_name": "Synthetic Supplier B"
+      }
+    },
+    {
+      "event_id": "E-CON-A-1",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-CON-A-1",
+      "entity_kind": "contract",
+      "entity_id": "CON-A",
+      "source_version": 1,
+      "effective_at": "2026-01-15T08:00:00Z",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "supplier_id": "SUP-A",
+        "max_quantity": 100,
+        "max_unit_price_minor": 1500
+      }
+    },
+    {
+      "event_id": "E-CON-B-1",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-CON-B-1",
+      "entity_kind": "contract",
+      "entity_id": "CON-B",
+      "source_version": 1,
+      "effective_at": "2026-01-15T08:00:00Z",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "supplier_id": "SUP-B",
+        "max_quantity": 100,
+        "max_unit_price_minor": 1500
+      }
+    },
+    {
+      "event_id": "E-ORD-A-1",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-ORD-A-1",
+      "entity_kind": "order",
+      "entity_id": "ORD-A",
+      "source_version": 1,
+      "effective_at": "2026-01-15T08:00:00Z",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "supplier_id": "SUP-A",
+        "contract_id": "CON-A",
+        "quantity": 5,
+        "unit_price_minor": 1000,
+        "status": "open"
+      }
+    },
+    {
+      "event_id": "E-ORD-B-1",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-ORD-B-1",
+      "entity_kind": "order",
+      "entity_id": "ORD-B",
+      "source_version": 1,
+      "effective_at": "2026-01-15T08:00:00Z",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "supplier_id": "SUP-B",
+        "contract_id": "CON-B",
+        "quantity": 5,
+        "unit_price_minor": 1000,
+        "status": "open"
+      }
+    },
+    {
+      "event_id": "E-ORD-C-1",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-ORD-C-1",
+      "entity_kind": "order",
+      "entity_id": "ORD-C",
+      "source_version": 1,
+      "effective_at": "2026-01-15T08:00:00Z",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "supplier_id": "SUP-A",
+        "contract_id": "CON-A",
+        "quantity": 5,
+        "unit_price_minor": 1000,
+        "status": "open"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "decision_id": "DEC-A",
+      "revision": 1,
+      "created_at": "2026-01-15T08:00:00Z",
+      "initial_status": "approved",
+      "open_obligation": true,
+      "amendment": {
+        "order_id": "ORD-A",
+        "supplier_id": "SUP-A",
+        "contract_id": "CON-A",
+        "quantity": 10,
+        "unit_price_minor": 1000,
+        "requested_delivery_date": "2026-01-22"
+      },
+      "dependencies": [
+        {
+          "entity_kind": "supplier",
+          "entity_id": "SUP-A",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "contract",
+          "entity_id": "CON-A",
+          "field_path": "limits",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "order",
+          "entity_id": "ORD-A",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "policy",
+          "entity_id": "POL-1",
+          "field_path": "rules",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "actor",
+          "entity_id": "REVIEWER-1",
+          "field_path": "authority",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        }
+      ],
+      "approval_seed": {
+        "approval_id": "APR-A",
+        "actor_id": "REVIEWER-1",
+        "granted_at": "2026-01-15T08:00:00Z",
+        "valid_until": "2026-01-15T09:00:00Z",
+        "policy_id": "POL-1",
+        "policy_version": 1
+      }
+    },
+    {
+      "decision_id": "DEC-B",
+      "revision": 1,
+      "created_at": "2026-01-15T08:00:00Z",
+      "initial_status": "approved",
+      "open_obligation": true,
+      "amendment": {
+        "order_id": "ORD-B",
+        "supplier_id": "SUP-B",
+        "contract_id": "CON-B",
+        "quantity": 10,
+        "unit_price_minor": 1000,
+        "requested_delivery_date": "2026-01-22"
+      },
+      "dependencies": [
+        {
+          "entity_kind": "supplier",
+          "entity_id": "SUP-B",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "contract",
+          "entity_id": "CON-B",
+          "field_path": "limits",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "order",
+          "entity_id": "ORD-B",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "policy",
+          "entity_id": "POL-1",
+          "field_path": "rules",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "actor",
+          "entity_id": "REVIEWER-1",
+          "field_path": "authority",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        }
+      ],
+      "approval_seed": {
+        "approval_id": "APR-B",
+        "actor_id": "REVIEWER-1",
+        "granted_at": "2026-01-15T08:00:00Z",
+        "valid_until": "2026-01-15T09:00:00Z",
+        "policy_id": "POL-1",
+        "policy_version": 1
+      }
+    },
+    {
+      "decision_id": "DEC-C",
+      "revision": 1,
+      "created_at": "2026-01-15T08:00:00Z",
+      "initial_status": "approved",
+      "open_obligation": true,
+      "amendment": {
+        "order_id": "ORD-C",
+        "supplier_id": "SUP-A",
+        "contract_id": "CON-A",
+        "quantity": 10,
+        "unit_price_minor": 1000,
+        "requested_delivery_date": "2026-01-22"
+      },
+      "dependencies": [
+        {
+          "entity_kind": "supplier",
+          "entity_id": "SUP-A",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "contract",
+          "entity_id": "CON-A",
+          "field_path": "limits",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "order",
+          "entity_id": "ORD-C",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "policy",
+          "entity_id": "POL-1",
+          "field_path": "rules",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        },
+        {
+          "entity_kind": "actor",
+          "entity_id": "REVIEWER-1",
+          "field_path": "authority",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        }
+      ],
+      "approval_seed": {
+        "approval_id": "APR-C",
+        "actor_id": "REVIEWER-1",
+        "granted_at": "2026-01-15T08:00:00Z",
+        "valid_until": "2026-01-15T09:00:00Z",
+        "policy_id": "POL-1",
+        "policy_version": 1
+      }
+    }
+  ],
+  "changes": [
+    {
+      "event_id": "E-SUP-A-2",
+      "source_id": "synthetic-procurement",
+      "source_event_id": "E-SUP-A-2",
+      "entity_kind": "supplier",
+      "entity_id": "SUP-A",
+      "source_version": 2,
+      "effective_at": "2026-01-15T08:10:00Z",
+      "observed_at": "2026-01-15T08:12:00Z",
+      "payload": {
+        "status": "on_hold",
+        "display_name": "Synthetic Supplier A"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "sequence": 1,
+      "at": "2026-01-15T08:05:00Z",
+      "type": "dispatch",
+      "decision_id": "DEC-C",
+      "idempotency_key": "DISPATCH-C-1"
+    },
+    {
+      "sequence": 2,
+      "at": "2026-01-15T08:12:00Z",
+      "type": "ingest_change",
+      "event_id": "E-SUP-A-2"
+    },
+    {
+      "sequence": 3,
+      "at": "2026-01-15T08:12:01Z",
+      "type": "deliver_notification",
+      "event_id": "E-SUP-A-2"
+    },
+    {
+      "sequence": 4,
+      "at": "2026-01-15T08:13:00Z",
+      "type": "dispatch",
+      "decision_id": "DEC-A",
+      "idempotency_key": "DISPATCH-A-1"
+    },
+    {
+      "sequence": 5,
+      "at": "2026-01-15T08:13:01Z",
+      "type": "dispatch",
+      "decision_id": "DEC-B",
+      "idempotency_key": "DISPATCH-B-1"
+    },
+    {
+      "sequence": 6,
+      "at": "2026-01-15T08:13:02Z",
+      "type": "dispatch",
+      "decision_id": "DEC-B",
+      "idempotency_key": "DISPATCH-B-1"
+    }
+  ]
+}
