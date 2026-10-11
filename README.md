@@ -2,6 +2,8 @@
 
 ![Decision Change Lab — Reliable decisions when the facts change.](docs/assets/overview.svg)
 
+[![Documentation integrity](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml)
+
 **Which approved decisions should be checked again when their supporting facts change?**
 
 Trace source versions to dependent decisions, identify affected work, and compare revalidation strategies under a shared final execution check.
