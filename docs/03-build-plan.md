@@ -1,6 +1,6 @@
 # 03 — Public milestones
 
-The repository currently contains a design and synthetic example. All application and experiment milestones below are pending; a milestone is complete only when its evidence is available.
+Initial offline components are implemented and verified. See [component progress and actual evidence](IMPLEMENTATION.md). M1 has initial contract/history evidence. M2–M5 remain pending; M6 has an initial packaging check, not a complete research release. The milestones below retain their complete acceptance boundaries.
 
 | Milestone | Intended result | Evidence required |
 |---|---|---|
@@ -13,6 +13,6 @@ The repository currently contains a design and synthetic example. All applicatio
 
 Read the [requirements](01-product-requirements.md), [architecture](02-architecture.md), [evaluation protocol](04-evaluation.md) and [definition of done](05-definition-of-done.md) for the public behavioral contract. M4 must precede a control-study claim; M5 additionally precedes an agent-study claim. A useful negative result remains publishable when all runs and limitations are reported.
 
-The intended interface is a local command-line runner with an optional read-only report interface. No application installation or execution command is available today. A future quick start must use commands tested against the released implementation.
+The intended interface is a local command-line runner with an optional read-only report interface. The README now contains tested commands for this initial slice. Additional commands become runnable instructions only after implementation and verification.
 
 Milestone updates should link the relevant source revision, verification artifact and unresolved limitations. Planned sample sizes and expected fixture outcomes must not be presented as observed results.

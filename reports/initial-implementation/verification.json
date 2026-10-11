@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1",
+  "scope": "initial_offline_components_only",
+  "verified_at": "2026-10-11T13:32:23.143010+00:00",
+  "python": "3.12.13",
+  "platform": "Darwin",
+  "package_version": "0.1.0",
+  "clean_wheel_install": true,
+  "wheel_run_outside_checkout": true,
+  "schemas_loaded_from_installed_wheel": true,
+  "behavioral_tests": {
+    "command": "python -m pytest -q tests",
+    "passed": 17,
+    "failed": 0
+  },
+  "ruff": {
+    "lint": "passed",
+    "format": "passed"
+  },
+  "uv_lock_sha256": "b76ded257b27d14247fbd0a5c6bbf177d0757e9d0fa1782325292832c04c2259",
+  "implementation_files_sha256": {
+    "src/decision_change_lab/__init__.py": "567facf79bbbd56a4b5bc1f80b4df6967d1e573100fdc680ab6591a658e3e77f",
+    "src/decision_change_lab/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "src/decision_change_lab/cli.py": "dabf0a3e64aca0d525b6a4b9f5096322b4c9dcd1058dbadd478da681db3f438b",
+    "src/decision_change_lab/common.py": "38c64e19f828112a4e547fd08da3f3d1a9d1ccd21cfe01f797d6bf884c300287",
+    "src/decision_change_lab/core.py": "7d8fbfa2390e0833955bee792ae7dfb03b9f0b5be2fa7af0fd578170e766dc78",
+    "tests/test_cli.py": "0fdac3850be3dc65abb493af3e3131e889762d2449b9c1533581c5a072aeb6e5",
+    "tests/test_core.py": "ac796e7d27fabc036afc85f9c24a42bed3d6f3db11ff1969775fa4c253b5f1cc",
+    "schemas/expected-result.schema.json": "547934737e5aba0fc40c9ef4c7a972210d30e5f3a538feaea7b0ce96543351f7",
+    "schemas/scenario.schema.json": "ad814814d70157f4a94d3c7373085e71c53dffb0670c015aaa04062bf5fa4b58",
+    "pyproject.toml": "4cd4b3b03e6f08e591ace6ec4d46ac41521c670fa3b097560c9d11a563f16344",
+    "uv.lock": "b76ded257b27d14247fbd0a5c6bbf177d0757e9d0fa1782325292832c04c2259",
+    ".python-version": "aa0d6581054e6e4ff3f91839deca7a854ad37221b8784d060b42d0f847ff1a3b"
+  },
+  "demos": [
+    {
+      "input": "examples/supplier-hold.json",
+      "input_sha256": "083c0d672c55963bc2fafd779ffb8aa68c3c5e84f23fefb0d120671f77149f8d",
+      "command": "dcl inspect examples/supplier-hold.json",
+      "exit_code": 0,
+      "output": "demo-1.json",
+      "output_sha256": "11933f7392542e675b41a6905470d7d8c773f2639860a29954cf51a849b15b43"
+    }
+  ],
+  "held_out_benchmark_executed": false,
+  "production_validated": false,
+  "limits": [
+    "Development fixtures and boundary tests only.",
+    "No predictive model or customer outcome is evaluated.",
+    "No live provider action is taken."
+  ]
+}

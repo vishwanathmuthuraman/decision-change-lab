@@ -1,0 +1,143 @@
+{
+  "schema_version": "0.1",
+  "kind": "fact_history_inspection",
+  "knowledge_at": "2026-01-15T08:20:00Z",
+  "visible_facts": [
+    {
+      "effective_at": "2026-01-15T08:00:00Z",
+      "entity_id": "CON-A",
+      "entity_kind": "contract",
+      "event_id": "E-CON-A-1",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "max_quantity": 100,
+        "max_unit_price_minor": 1500,
+        "supplier_id": "SUP-A"
+      },
+      "source_event_id": "E-CON-A-1",
+      "source_id": "synthetic-procurement",
+      "source_version": 1
+    },
+    {
+      "effective_at": "2026-01-15T08:00:00Z",
+      "entity_id": "CON-B",
+      "entity_kind": "contract",
+      "event_id": "E-CON-B-1",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "max_quantity": 100,
+        "max_unit_price_minor": 1500,
+        "supplier_id": "SUP-B"
+      },
+      "source_event_id": "E-CON-B-1",
+      "source_id": "synthetic-procurement",
+      "source_version": 1
+    },
+    {
+      "effective_at": "2026-01-15T08:00:00Z",
+      "entity_id": "ORD-A",
+      "entity_kind": "order",
+      "event_id": "E-ORD-A-1",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "contract_id": "CON-A",
+        "quantity": 5,
+        "status": "open",
+        "supplier_id": "SUP-A",
+        "unit_price_minor": 1000
+      },
+      "source_event_id": "E-ORD-A-1",
+      "source_id": "synthetic-procurement",
+      "source_version": 1
+    },
+    {
+      "effective_at": "2026-01-15T08:00:00Z",
+      "entity_id": "ORD-B",
+      "entity_kind": "order",
+      "event_id": "E-ORD-B-1",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "contract_id": "CON-B",
+        "quantity": 5,
+        "status": "open",
+        "supplier_id": "SUP-B",
+        "unit_price_minor": 1000
+      },
+      "source_event_id": "E-ORD-B-1",
+      "source_id": "synthetic-procurement",
+      "source_version": 1
+    },
+    {
+      "effective_at": "2026-01-15T08:00:00Z",
+      "entity_id": "ORD-C",
+      "entity_kind": "order",
+      "event_id": "E-ORD-C-1",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "contract_id": "CON-A",
+        "quantity": 5,
+        "status": "open",
+        "supplier_id": "SUP-A",
+        "unit_price_minor": 1000
+      },
+      "source_event_id": "E-ORD-C-1",
+      "source_id": "synthetic-procurement",
+      "source_version": 1
+    },
+    {
+      "effective_at": "2026-01-15T08:10:00Z",
+      "entity_id": "SUP-A",
+      "entity_kind": "supplier",
+      "event_id": "E-SUP-A-2",
+      "observed_at": "2026-01-15T08:12:00Z",
+      "payload": {
+        "display_name": "Synthetic Supplier A",
+        "status": "on_hold"
+      },
+      "source_event_id": "E-SUP-A-2",
+      "source_id": "synthetic-procurement",
+      "source_version": 2
+    },
+    {
+      "effective_at": "2026-01-15T08:00:00Z",
+      "entity_id": "SUP-B",
+      "entity_kind": "supplier",
+      "event_id": "E-SUP-B-1",
+      "observed_at": "2026-01-15T08:00:00Z",
+      "payload": {
+        "display_name": "Synthetic Supplier B",
+        "status": "active"
+      },
+      "source_event_id": "E-SUP-B-1",
+      "source_id": "synthetic-procurement",
+      "source_version": 1
+    }
+  ],
+  "review_candidates": [
+    {
+      "decision_id": "DEC-A",
+      "changed_dependencies": [
+        {
+          "entity_kind": "supplier",
+          "entity_id": "SUP-A",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        }
+      ]
+    },
+    {
+      "decision_id": "DEC-C",
+      "changed_dependencies": [
+        {
+          "entity_kind": "supplier",
+          "entity_id": "SUP-A",
+          "field_path": "status",
+          "source_version": 1,
+          "origin": "supplied_reference"
+        }
+      ]
+    }
+  ],
+  "dispatch_implemented": false
+}
