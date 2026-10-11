@@ -1,43 +1,91 @@
 # Decision Change Lab
 
-**Status: documentation blueprint. Implementation has not started.** This repository contains a proposed product, architecture, build sequence, evaluation protocol, and original synthetic example. There is no runnable application, completed benchmark, or demonstrated performance yet. All acceptance targets below are unachieved.
+![Decision Change Lab — Reliable decisions when the facts change.](docs/assets/overview.svg)
 
-Decision Change Lab asks: **when facts change after approval, which pending decisions should be checked again, and which completed decisions need investigation?** The first workflow is a simulated purchase-order amendment. It links decisions to source versions, replays changes, and compares four revalidation strategies under the same final execution check.
+**Which approved decisions should be checked again when their supporting facts change?**
 
-Reports identify the operational problem; this exact product is our hypothesis. [PwC’s governance discussion](https://www.pwc.com/gx/en/issues/technology/three-governance-shifts-agentic-ai.html) motivates accountable ongoing oversight. [McKinsey’s procurement analysis](https://www.mckinsey.com/capabilities/operations/our-insights/redefining-procurement-performance-in-the-era-of-agentic-ai) supplies a relevant business workflow. Neither establishes demand, novelty, or the effectiveness of this design. [Sources and rationale](docs/06-sources-and-design-rationale.md) separates evidence from inference.
+Trace source versions to dependent decisions, identify affected work, and compare revalidation strategies under a shared final execution check.
 
-## Start here
+**Stage: research specification.** This repository contains design work and synthetic examples. Application implementation and performance evaluation are pending; there is no working product or measured result yet.
 
-1. Read [requirements](docs/01-product-requirements.md) to understand the user, boundaries, and numbered requirements.
-2. Read [architecture](docs/02-architecture.md) before implementing the state model, clock, or dispatch control.
-3. Work through [the build plan](docs/03-build-plan.md) in dependency order; maintain [the tracker](tasks.csv).
-4. Freeze [the evaluation protocol](docs/04-evaluation.md) before opening the held-out cases.
-5. Use [definition of done](docs/05-definition-of-done.md) as the release gate, then [publication runbook](docs/08-publication.md).
-6. Keep [delivery decisions and risks](docs/07-delivery-and-risk.md) current using actual evidence.
+[Explore the example](#a-concrete-example) · [Architecture](docs/02-architecture.md) · [Evaluation protocol](docs/04-evaluation.md) · [Engineering standards](ENGINEERING.md)
 
-## What is here now
+## A concrete example
 
-- Eight design and delivery documents.
-- [An original synthetic supplier-hold scenario](examples/supplier-hold.json), [its schema](schemas/scenario.schema.json), and [specified expected outcome](examples/supplier-hold.expected.json).
-- [Example-reading instructions](examples/README.md) and [an expected-result schema](schemas/expected-result.schema.json).
-- An implementation tracker, ignore rules, and optional model configuration example.
+A purchase-order amendment is approved. Before execution, a supplier is placed on hold. The approval still exists, but the evidence that justified it has changed.
 
-The expected outcome is a specification, **not output from a working system**. No private operational data is needed. The example is separate from the planned development and held-out datasets.
+[Supplier-hold input](examples/supplier-hold.json) · [Expected behavior](examples/supplier-hold.expected.json) · [Fixture guide](examples/README.md)
 
-## Intended release
+The expected outcomes describe the intended behavior. They are not output from an executed application.
 
-Proposed stack: Python 3.12, uv, SQLite, a command-line runner, and a read-only local report. FastAPI is an optional local interface after the core works. The deterministic demo must run without a model provider or API key. An optional model adapter proposes amendments and dependency candidates; it cannot execute actions.
+## How the proposed system works
 
-Version 1 should ship a reproducible demo, four baseline implementations, tests for consequential state transitions, 2,400 deterministic control episodes, and a separately reported agent-input study with 120 cached proposal-generation samples replayed across four strategies for 480 episodes if its budget and implementation gates pass. An incomplete agent evaluation must be prominently marked incomplete; it cannot be counted as delivered.
+```mermaid
+flowchart LR
+    A[Versioned evidence] --> B[Decision dependencies]
+    B --> C[Changed facts]
+    C --> D[Revalidation queue]
+    D --> E[Final execution guard]
+    E --> F[Allow or block with evidence]
+```
 
-No install command is available today. Commands in the build plan are explicitly **FUTURE interface contracts**, to implement and verify before copying them into a runnable quick start.
+The engineering question is the tradeoff between rechecking everything and selectively rechecking decisions without relaxing the common final guard.
 
-## Scope and limitations
+## What you can inspect today
 
-This is a local simulator for research and operational-control design. It does not place real orders, transfer money, reverse completed transactions, certify compliance, or prove losses prevented. Atomicity claims apply only to the specified SQLite transaction boundary. Unknown source changes, incomplete dependencies, and delayed human review remain visible limitations.
+| Artifact | What it establishes |
+|---|---|
+| Requirements and architecture | The proposed problem, boundaries and consequential design decisions. |
+| Original synthetic scenarios and schemas | Concrete inputs and explicit expected behavior. |
+| Evaluation protocol and release criteria | How implementation and claims should be assessed. |
+| Source rationale | Which public evidence motivated the design and which conclusions remain hypotheses. |
+| Documentation checks | Whether the supplied JSON, relative links and original SVG assets are structurally valid. |
 
-A useful negative result is acceptable. A selective strategy must earn any efficiency claim against the same guard and evidence used by its baselines; blocking all decisions is not success.
+One original synthetic scenario, input/output schemas, requirements, architecture and a comparative evaluation protocol.
 
-## License and ownership
+## Technical choices
 
-License selection is pending. No code, documentation, or data license grant is supplied in this blueprint. Choose and record the licenses and dependency compatibility before an openly licensed release. All example records in this repository were created synthetically for this project; they are not copied from operational records. Report sources are linked, not redistributed.
+Python + SQLite for a reproducible event simulator and transactional state rules. A model adapter is optional; it cannot authorize execution.
+
+Python, Go, Rust, SQL, TypeScript and Rails each have appropriate uses. This project follows [documented selection rules](ENGINEERING.md): add a runtime or framework only when requirements, profiling and maintainability justify it.
+
+## What the evaluation must show
+
+Compare four revalidation strategies using the same execution guard. Report unsafe actions, unnecessary review, completed work and limitations when dependencies are missing. Separate deterministic control experiments from optional model-generated proposals.
+
+The [evaluation protocol](docs/04-evaluation.md) defines the comparison and limitations. No benchmark score, customer impact, novelty claim or independent endorsement is asserted.
+
+## Read the design
+
+| Start with | Then inspect |
+|---|---|
+| [Problem and requirements](docs/01-product-requirements.md) | [Architecture and boundaries](docs/02-architecture.md) |
+| [Public implementation milestones](docs/03-build-plan.md) | [Evaluation protocol](docs/04-evaluation.md) |
+| [Definition of done](docs/05-definition-of-done.md) | [Sources and design rationale](docs/06-sources-and-design-rationale.md) |
+| [Technical limitations](docs/07-delivery-and-risk.md) | [Publication boundaries](docs/08-publication.md) |
+
+## Check this documentation
+
+From a clone of this repository with Python 3.12 or later:
+
+```sh
+python scripts/check_public_docs.py
+```
+
+This checks documentation only. Application installation and demo commands will be added when implemented and verified. The repository's **Documentation integrity** workflow runs the same check on pushes and pull requests.
+
+## Research roadmap
+
+- [x] Define the problem, contracts and illustrative synthetic scenarios.
+- [x] Document evaluation methods and consequential failure cases.
+- [ ] Implement and test a reproducible offline baseline.
+- [ ] Complete held-out comparisons and publish actual results, including failures.
+- [ ] Seek independent reproduction and review.
+
+## Scope and contribution
+
+See [contribution guidance](CONTRIBUTING.md) for useful review questions. Reports should include a minimal synthetic example and the relevant requirement or evaluation rule. Never submit customer records, credentials or private operational information.
+
+This is a curated research repository. Internal delivery schedules and commercial planning are maintained separately. Public technical methods are deliberately inspectable; public availability does not imply production readiness.
+
+Maintained by [Vishwanath Muthuraman](https://github.com/vishwanathmuthuraman). Source material is cited; citations do not imply endorsement. License selection is pending, and no code, documentation or data license grant is supplied.

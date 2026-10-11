@@ -38,3 +38,6 @@ data/raw/
 *.log
 .cache/
 .DS_Store
+
+# Internal full handoff lives outside this public repository.
+BLUEPRINT.html

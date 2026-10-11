@@ -1,6 +1,6 @@
 # 04 — Evaluation protocol
 
-Status: proposed protocol, not preregistered, frozen, or executed. These are planning sample sizes, not a statistical power guarantee. A freeze record will replace open configuration choices after development. [Build plan WP-09–12](03-build-plan.md) defines the execution gates.
+Status: proposed protocol, not preregistered, frozen, or executed. These are planning sample sizes, not a statistical power guarantee. A freeze record will replace open configuration choices after development. [Public milestones M3–M5](03-build-plan.md) define the implementation and study gates.
 
 ## Question and estimands
 

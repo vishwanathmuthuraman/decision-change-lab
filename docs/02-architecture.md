@@ -20,7 +20,7 @@ hidden truth + output traces -> isolated evaluator -> aggregate report
 optional agent -> validated proposal/dependency candidates -> normal review path
 ```
 
-Use Python 3.12 and a uv-managed package. The core uses SQLite and standard-library arithmetic/time primitives; propose Pydantic for typed boundaries, jsonschema for fixture validation, pytest for tests, and Ruff for linting. Pin exact versions during WP-02 instead of treating a version guess as tested compatibility. The CLI is the primary interface. A later local FastAPI adapter calls the same application services; it must not implement a second dispatch path.
+Use Python 3.12 and a uv-managed package. The core uses SQLite and standard-library arithmetic/time primitives; propose Pydantic for typed boundaries, jsonschema for fixture validation, pytest for tests, and Ruff for linting. Pin exact versions during the [contract milestone](03-build-plan.md) instead of treating a version guess as tested compatibility. The CLI is the primary interface. A later local FastAPI adapter calls the same application services; it must not implement a second dispatch path.
 
 Suggested implementation layout is `src/decision_change_lab/` with `domain/`, `storage/`, `policies/`, `strategies/`, `replay/`, `agents/`, `evaluation/`, `reports/`, and `cli.py`. Keep hidden labels outside the package runtime input. A shared fixture/event utility may later be extracted into a versioned package, but this repository must install independently and must not import sibling repositories by relative path.
 
