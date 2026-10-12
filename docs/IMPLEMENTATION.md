@@ -28,6 +28,16 @@ Observed demo: At the supplied horizon, the supplier hold produces review candid
 
 [Captured output](../reports/initial-implementation/demo-1.json). Test use of authored expected files is restricted to development assertions; application code does not open them. These are component regressions, not independent held-out evaluation or performance measurements.
 
+## M2 increment: immutable approval bindings (FR-04, first part)
+
+[approval.py](../src/decision_change_lab/approval.py) binds an approval to decision revision, canonical payload digest, actor, policy version, expiry and a source-version digest, sealed by a binding digest. `verify_binding` returns deterministic rejection reasons: `binding_tampered`, `approval_expired` (at or after `valid_until`), `revision_mismatch`, `payload_mismatch`, `source_versions_changed`.
+
+Source versions for actor and policy dependencies come from the currently visible fact at the knowledge cutoff (observed at or before it); the scenario's baseline actor/policy snapshot is only a fallback when no such fact is visible. Other entity kinds have no fallback and a missing fact is an error. [Tests](../tests/test_approval.py) cover both actor and policy sources, one instant before and exactly at observation, later authority changes, supplier change, expiry, tampering, payload/revision change and window bounds.
+
+Commands run: `uv run --locked ruff format src tests`, `uv run --locked ruff check src tests`, `uv run --locked pytest -q`. Observed: lint passed; **26 tests passed** (9 new). Documentation check is run separately by the trusted post steps.
+
+Remaining limits: no final execution guard, dispatch, revocation, idempotency receipts or replay; the binding is a local in-memory value, not persisted; the guard's re-read inside a transaction and fact change during dispatch are untested.
+
 ## Relationship to the full plan
 
 M1 has initial contract/history evidence. M2–M5 remain pending; M6 has an initial packaging check, not a complete research release.
