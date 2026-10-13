@@ -1,9 +1,17 @@
+<p align="center"><img src="docs/assets/brand/logo.svg" width="88" height="88" alt="DecisionLatch logo"></p>
+
 # DecisionLatch — Decision revalidation research
 
-![DecisionLatch — Reliable decisions when the facts change.](docs/assets/overview.svg)
+<p align="center"><img src="docs/assets/brand/banner.svg" width="100%" alt="DecisionLatch: Keep decisions connected to changing evidence. Versioned facts, Dependency tracing, Review evidence. Offline research components."></p>
 
-[![Documentation integrity](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml)
 [![Implementation checks](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/implementation.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/implementation.yml)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square)](pyproject.toml)
+[![Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-68b89b?style=flat-square)](LICENSE)
+[![Documentation integrity](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml)
+
+[Quick start](#run-the-initial-implementation) · [Implemented scope](docs/IMPLEMENTATION.md) · [Architecture](docs/02-architecture.md) · [Evaluation](docs/04-evaluation.md) · [Contribute](CONTRIBUTING.md)
+
+---
 
 **Which approved decisions should be checked again when their supporting facts change?**
 
