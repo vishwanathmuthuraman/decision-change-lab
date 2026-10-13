@@ -1,5 +1,7 @@
 """Immutable approval bindings over knowledge-bounded source versions (FR-04)."""
 
+from types import MappingProxyType
+
 from .common import ContractError, digest, timestamp
 
 
@@ -36,7 +38,10 @@ def bound_versions(scenario, decision, store, knowledge_at):
 
 
 def bind_approval(scenario, decision_id, store, knowledge_at):
-    """Create an immutable binding; it never authorizes another revision or payload."""
+    """Freeze a trusted fixture approval at its grant-time evidence versions.
+
+    This in-memory record is not an authenticated approval or issuance ledger.
+    """
     decision = _decision(scenario, decision_id)
     seed = decision["approval_seed"]
     if (
@@ -45,7 +50,15 @@ def bind_approval(scenario, decision_id, store, knowledge_at):
         < timestamp(seed["valid_until"])
     ):
         raise ContractError("approval not active at binding time")
-    versions = bound_versions(scenario, decision, store, knowledge_at)
+    versions = bound_versions(scenario, decision, store, seed["granted_at"])
+    if bound_versions(scenario, decision, store, knowledge_at) != versions:
+        raise ContractError("approval evidence changed since grant")
+    recorded = {
+        row["entity_kind"] + ":" + row["entity_id"]: row["source_version"]
+        for row in decision["dependencies"]
+    }
+    if recorded != versions or seed["policy_version"] != versions["policy:" + seed["policy_id"]]:
+        raise ContractError("approval evidence does not match recorded versions")
     binding = {
         "approval_id": seed["approval_id"],
         "decision_id": decision_id,
@@ -56,19 +69,24 @@ def bind_approval(scenario, decision_id, store, knowledge_at):
         "policy_version": versions["policy:" + seed["policy_id"]],
         "source_versions": versions,
         "source_digest": digest(versions),
+        "granted_at": seed["granted_at"],
         "valid_until": seed["valid_until"],
     }
     binding["binding_digest"] = digest(binding)
-    return binding
+    binding["source_versions"] = MappingProxyType(versions)
+    return MappingProxyType(binding)
 
 
 def verify_binding(binding, scenario, store, at):
-    """Return deterministic rejection reasons; an empty list means the binding holds."""
+    """Check local consistency and freshness; an empty list does not authorize dispatch."""
     body = {k: v for k, v in binding.items() if k != "binding_digest"}
+    body["source_versions"] = dict(body["source_versions"])
     if digest(body) != binding.get("binding_digest"):
         return ["binding_tampered"]
     decision = _decision(scenario, binding["decision_id"])
     reasons = []
+    if timestamp(at) < timestamp(binding["granted_at"]):
+        return ["approval_not_yet_valid"]
     if timestamp(at) >= timestamp(binding["valid_until"]):
         reasons.append("approval_expired")
     if decision["revision"] != binding["revision"]:

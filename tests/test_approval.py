@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from decision_change_lab.approval import bind_approval, verify_binding
+from decision_change_lab.approval import bind_approval, bound_versions, verify_binding
 from decision_change_lab.common import ContractError
 from decision_change_lab.core import FactStore
 
@@ -60,13 +60,11 @@ def test_visible_fact_overrides_baseline_snapshot(scenario, kind):
     entity = "REVIEWER-1" if kind == "actor" else "POL-1"
     store = store_for(scenario, [build(scenario, "2026-01-15T08:02:00Z")])
     key = f"{kind}:{entity}"
-    before = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:59Z")
-    at = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:02:00Z")
-    assert before["source_versions"][key] == 1  # baseline fallback
-    assert at["source_versions"][key] == 2  # visible fact wins at observation time
-    assert before["binding_digest"] != at["binding_digest"]
-    if kind == "policy":
-        assert at["policy_version"] == 2
+    decision = scenario["decisions"][0]
+    before = bound_versions(scenario, decision, store, "2026-01-15T08:01:59Z")
+    at = bound_versions(scenario, decision, store, "2026-01-15T08:02:00Z")
+    assert before[key] == 1  # baseline fallback
+    assert at[key] == 2  # visible fact wins at observation time
 
 
 @pytest.mark.parametrize("kind", ["actor", "policy"])
@@ -119,3 +117,64 @@ def test_missing_non_authority_fact_is_not_filled_from_baseline(scenario):
     store.ingest(scenario["initial_facts"][1:])  # SUP-A absent
     with pytest.raises(ContractError):
         bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:00Z")
+
+
+@pytest.mark.parametrize("kind", ["actor", "policy"])
+def test_old_seed_cannot_bind_new_authority_versions(scenario, kind):
+    build = actor_fact if kind == "actor" else policy_fact
+    store = store_for(scenario, [build(scenario, "2026-01-15T08:02:00Z")])
+    with pytest.raises(ContractError, match="approval evidence changed since grant"):
+        bind_approval(scenario, "DEC-A", store, "2026-01-15T08:02:00Z")
+
+
+@pytest.mark.parametrize("nested", [False, True])
+def test_binding_cannot_be_mutated(scenario, nested):
+    binding = bind_approval(scenario, "DEC-A", store_for(scenario), "2026-01-15T08:01:00Z")
+    with pytest.raises(TypeError):
+        if nested:
+            binding["source_versions"]["actor:REVIEWER-1"] = 2
+        else:
+            binding["actor_id"] = "OTHER"
+
+
+def test_verification_rejects_time_before_grant(scenario):
+    scenario["decisions"][0]["approval_seed"]["granted_at"] = "2026-01-15T08:01:00Z"
+    store = store_for(scenario)
+    binding = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:00Z")
+    assert verify_binding(binding, scenario, store, "2026-01-15T08:00:59Z") == [
+        "approval_not_yet_valid"
+    ]
+    assert verify_binding(binding, scenario, store, "2026-01-15T08:01:00Z") == []
+
+
+@pytest.mark.parametrize("kind", ["actor", "policy"])
+def test_new_approval_can_bind_new_authority_versions(scenario, kind):
+    build = actor_fact if kind == "actor" else policy_fact
+    at = "2026-01-15T08:02:00Z"
+    store = store_for(scenario, [build(scenario, at)])
+    decision = scenario["decisions"][0]
+    decision["approval_seed"].update(approval_id="APR-NEW", granted_at=at)
+    for dependency in decision["dependencies"]:
+        if dependency["entity_kind"] == kind:
+            dependency["source_version"] = 2
+    if kind == "policy":
+        decision["approval_seed"]["policy_version"] = 2
+    binding = bind_approval(scenario, "DEC-A", store, at)
+    assert binding["approval_id"] == "APR-NEW"
+    assert verify_binding(binding, scenario, store, at) == []
+
+
+def test_seed_policy_version_must_match_grant_evidence(scenario):
+    scenario["decisions"][0]["approval_seed"]["policy_version"] = 7
+    with pytest.raises(ContractError, match="does not match recorded versions"):
+        bind_approval(scenario, "DEC-A", store_for(scenario), "2026-01-15T08:01:00Z")
+
+
+def test_binding_retains_evidence_after_input_mutation(scenario):
+    store = store_for(scenario)
+    binding = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:00Z")
+    scenario["actors"][0]["source_version"] = 2
+    assert binding["source_versions"]["actor:REVIEWER-1"] == 1
+    assert verify_binding(binding, scenario, store, "2026-01-15T08:01:00Z") == [
+        "source_versions_changed"
+    ]
