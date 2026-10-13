@@ -30,7 +30,7 @@ A future archive or DOI should identify the exact release and license. It is an 
 
 ## A truthful public description today
 
-“Decision Change Lab is a proposed local research system for studying how workflows should respond when source facts change after approval. The documentation defines a synthetic purchase-order scenario, four revalidation strategies, a common execution check, and a planned evaluation. Implementation and experimental results are pending.”
+“DecisionLatch is a proposed local research system for studying how workflows should respond when source facts change after approval. The documentation defines a synthetic purchase-order scenario, four revalidation strategies, a common execution check, and a planned evaluation. Initial offline components are implemented; the full workflow and experimental results remain pending.”
 
 Once implemented, replace that text with the specific completed features and actual measured evidence. Do not call this production-ready, compliant, loss-preventing, novel, adopted, independently validated, or commercially proven without appropriate evidence.
 

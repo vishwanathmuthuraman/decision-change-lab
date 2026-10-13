@@ -1,6 +1,6 @@
-# Decision Change Lab
+# DecisionLatch — Decision revalidation research
 
-![Decision Change Lab — Reliable decisions when the facts change.](docs/assets/overview.svg)
+![DecisionLatch — Reliable decisions when the facts change.](docs/assets/overview.svg)
 
 [![Documentation integrity](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml)
 [![Implementation checks](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/implementation.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/implementation.yml)
@@ -10,6 +10,8 @@
 Trace source versions to dependent decisions, identify affected work, and compare revalidation strategies under a shared final execution check.
 
 **Stage: initial offline implementation.** Runnable Python components, synthetic demos and behavioral tests are available. The complete workflow, predictive/model evaluation and production product remain pending.
+
+This is the public research project previously called **Decision Change Lab**. The repository URL, Python package and CLI commands remain unchanged.
 
 ## Run the initial implementation
 
