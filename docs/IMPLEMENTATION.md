@@ -12,7 +12,7 @@ This is the first implemented offline slice. “Complete” below means the boun
 
 Source: [core](../src/decision_change_lab/core.py), [contracts/utilities](../src/decision_change_lab/common.py), [CLI](../src/decision_change_lab/cli.py), [behavioral tests](../tests/test_core.py), [CLI tests](../tests/test_cli.py). Runtime selection is recorded in [ADR 0001](decisions/0001-offline-core.md).
 
-## What actually ran
+## Initial verification (historical)
 
 Verified on Python **3.12.13**, Darwin: **17 tests passed, zero failed**, Ruff lint/format checks passed. A wheel was built, installed with locked dependency hashes into a fresh environment and exercised from outside the checkout; its schema files loaded from the installed package. The CLI input/output hashes and implementation-file hashes are in the [verification record](../reports/initial-implementation/verification.json). That file identifies exact tested inputs; expected specifications were not copied into an execution report.
 
@@ -44,7 +44,7 @@ Remaining limits: no durable approval/revision ledger, revocation, benign revali
 
 ## Relationship to the full plan
 
-M1 has initial contract/history evidence. M2–M5 remain pending; M6 has an initial packaging check, not a complete research release.
+M1 has initial contract/history evidence; M2 has partial approval-binding evidence. The rest of M2 and M3–M5 remain pending. M6 has packaging checks for the implemented components, not a complete research release.
 
 The [build plan](03-build-plan.md), [requirements](01-product-requirements.md), [evaluation](04-evaluation.md) and [definition of done](05-definition-of-done.md) remain the release criteria. Planned acceptance registers describe the wider system; partial progress does not replace their full conditions. Documentation checks validate authored artifacts separately from application CI.
 

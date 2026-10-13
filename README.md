@@ -33,7 +33,9 @@ uv run --locked pytest
 
 The CLI prints JSON. `validate` checks the same input contract; invalid or unsupported input returns exit code 2 with a JSON error on stderr. Successful inspection returns exit code 0.
 
-**Verified locally:** 17 behavioral/CLI tests, Ruff checks, and an installed wheel executed outside the checkout. See [completed tasks and next steps](docs/IMPLEMENTATION.md), [the actual verification record](reports/initial-implementation/verification.json) and [captured demo output](reports/initial-implementation/demo-1.json). This evidence covers the initial offline components; the full study remains pending.
+**Initial verification:** 17 behavioral/CLI tests, Ruff checks, and an installed wheel executed outside the checkout. The [original verification record](reports/initial-implementation/verification.json) and [captured demo output](reports/initial-implementation/demo-1.json) retain the evidence for that first slice.
+
+**Current component checks:** 35 source tests and the same 35 tests against an installed wheel pass. Approval bindings now preserve grant-time evidence versions and both validity bounds, reject changed evidence, and expose read-only mappings. See [implemented behavior and remaining work](docs/IMPLEMENTATION.md). This is a trusted offline fixture component: the digests check consistency, and the helper does not authenticate approvals or authorize dispatch. Durable issuance, revocation and the final execution guard remain pending.
 
 [Explore the example](#a-concrete-example) · [Architecture](docs/02-architecture.md) · [Evaluation protocol](docs/04-evaluation.md) · [Engineering standards](ENGINEERING.md)
 
