@@ -1,6 +1,6 @@
-# Decision Change Lab
+# DecisionLatch — Decision revalidation research
 
-![Decision Change Lab — Reliable decisions when the facts change.](docs/assets/overview.svg)
+![DecisionLatch — Reliable decisions when the facts change.](docs/assets/overview.svg)
 
 [![Documentation integrity](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/docs.yml)
 [![Implementation checks](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/implementation.yml/badge.svg?branch=main)](https://github.com/vishwanathmuthuraman/decision-change-lab/actions/workflows/implementation.yml)
@@ -10,6 +10,8 @@
 Trace source versions to dependent decisions, identify affected work, and compare revalidation strategies under a shared final execution check.
 
 **Stage: initial offline implementation.** Runnable Python components, synthetic demos and behavioral tests are available. The complete workflow, predictive/model evaluation and production product remain pending.
+
+This is the public research project previously called **Decision Change Lab**. The repository URL, Python package and CLI commands remain unchanged.
 
 ## Run the initial implementation
 
@@ -107,4 +109,8 @@ See [contribution guidance](CONTRIBUTING.md) for useful review questions. Report
 
 This is a curated research repository. Internal delivery schedules and commercial planning are maintained separately. Public technical methods are deliberately inspectable; public availability does not imply production readiness.
 
-Maintained by [Vishwanath Muthuraman](https://github.com/vishwanathmuthuraman). Source material is cited; citations do not imply endorsement. License selection is pending, and no code, documentation or data license grant is supplied.
+Maintained by [Vishwanath Muthuraman](https://github.com/vishwanathmuthuraman). Source material is cited; citations do not imply endorsement. Original code, documentation and synthetic fixtures are licensed under Apache-2.0; see LICENSE and NOTICE. Third-party material retains its own terms.
+
+## License
+
+Original repository material is licensed under [Apache-2.0](LICENSE). See [licensing and attribution](docs/09-licensing.md) for scope, third-party material and distribution requirements.
