@@ -1,11 +1,11 @@
 # 08 — Public release and maintenance runbook
 
-This repository is prepared for authorized public GitHub sharing as a documentation blueprint. Public availability of these documents is not an application release: implementation, hosting, model calls and measured evaluation remain uncompleted. License selection is pending; no code, documentation or data license grant is supplied. The runbook describes future release requirements; it is not permission to publish unrelated material.
+This repository is prepared for authorized public GitHub sharing as a documentation blueprint. Public availability of these documents is not an application release: implementation, hosting, model calls and measured evaluation remain uncompleted. Original code, documentation and synthetic fixtures are licensed under Apache-2.0; see LICENSE and NOTICE. Third-party material retains its own terms. The runbook describes future release requirements; it is not permission to publish unrelated material.
 
 ## Before any public repository release
 
 1. Confirm which artifacts are being released and their ownership. Use only original synthetic fixtures or explicitly permitted public inputs. Do not add operational exports, access tokens, raw model logs, private correspondence, or screenshots containing unrelated tabs or identities.
-2. Select licenses for code, documentation, and synthetic data, checking compatibility with dependencies and any future borrowed material. Add the actual license files only after that decision. “License pending” must not be presented as an open-source license.
+2. Preserve the Apache-2.0 LICENSE and NOTICE for original repository material. Check ownership, dependency compatibility and separate license terms before adding borrowed material; see 09-licensing.md.
 3. Inspect the entire tracked-file list and history. Ignore rules prevent some new files being added; they do not remove previously tracked content or rewrite history. Review JSON, notebooks, logs, archives, screenshots, and metadata as well as text.
 4. Keep a public allowlist: source code once implemented, reviewed synthetic fixtures, schemas, locked environment, tests, protocol, curated aggregate results, necessary synthetic failure traces, and documentation. Keep generated working artifacts outside this allowlist.
 5. Check every claim against status: proposed design, implemented feature, measured result, reproduced result, and independently reviewed result mean different things. Replace future commands with tested commands only after they work.

@@ -5,6 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "decision-change-lab"
 version = "0.1.0"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 description = "Offline synthetic research components for decision-change-lab"
 requires-python = ">=3.12,<3.13"
 dependencies = ["jsonschema==4.26.0"]
