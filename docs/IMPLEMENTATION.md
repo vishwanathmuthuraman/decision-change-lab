@@ -28,6 +28,20 @@ Observed demo: At the supplied horizon, the supplier hold produces review candid
 
 [Captured output](../reports/initial-implementation/demo-1.json). Test use of authored expected files is restricted to development assertions; application code does not open them. These are component regressions, not independent held-out evaluation or performance measurements.
 
+## M2 increment: immutable approval bindings (FR-04, first part)
+
+[approval.py](../src/decision_change_lab/approval.py) creates a read-only in-memory binding, including a read-only source-version mapping. It captures the fixture decision revision, payload digest, actor, policy version, source versions and both bounds of the approval window.
+
+Binding resolves the evidence available at the approval's `granted_at`, checks it against the recorded dependency and policy versions, and rejects binding later if those versions changed. Visible actor/policy facts take precedence over the fixture's baseline snapshot. An old approval seed cannot silently acquire newer evidence. A new trusted fixture approval must carry its new grant time and matching recorded versions; this helper does not issue or authenticate human approvals.
+
+`verify_binding` checks consistency, revision, payload, source versions and the half-open validity window: `granted_at <= at < valid_until`. It reports `approval_not_yet_valid`, `approval_expired`, `binding_tampered`, `revision_mismatch`, `payload_mismatch` or `source_versions_changed`. Missing evidence still raises `ContractError`. An empty reason list is not permission to dispatch.
+
+Five regression cases failed against the original draft: actor and policy rebinding, mutation at the top level and in nested source versions, and verification before the grant. After the fixes, **35 source tests passed**, including the earlier core/CLI tests. The same 35 tests also passed against a clean installed wheel from outside the checkout. Ruff lint/format and documentation integrity checks passed. Positive cases also cover new fixture approvals after authority changes, grant-time acceptance, policy-version mismatch and mutation of caller-owned inputs. These are synthetic component checks, not a held-out benchmark.
+
+The unkeyed digests detect accidental inconsistency; anyone able to rewrite a record can recompute them. Read-only mappings prevent mutation through the returned Python interface, not hostile same-process code. Input fixtures are trusted grant-time records, not an authenticated issuance ledger. The helper does not prevent a caller from inventing a replacement scenario or approval ID.
+
+Remaining limits: no durable approval/revision ledger, revocation, benign revalidation proofs, final execution guard, dispatch, idempotency receipts or replay. No serialization or restart guarantee is claimed for these local mapping views. FR-04 and M2 remain partial.
+
 ## Relationship to the full plan
 
 M1 has initial contract/history evidence. M2–M5 remain pending; M6 has an initial packaging check, not a complete research release.
@@ -42,7 +56,7 @@ All example records and observations are synthetic. No network integration or ex
 
 ## Next implementation steps
 
-1. Implement immutable approval bindings and a final execution guard against current policy, actor authority and fact versions; test expiry and a fact change during dispatch.
+1. Persist approval/revision records and add revocation plus a final execution guard against current policy, actor authority and fact versions; test restart and a fact change during dispatch.
 2. Add a replay runner with pending/completed consequences and persisted idempotent local effects; demonstrate retry and restart behavior before comparing strategies.
 3. Implement the four strategies behind one guard, then freeze scenarios and evaluation inputs before measuring outcomes.
 
