@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from decision_change_lab.approval import bind_approval, bound_versions, verify_binding
+from decision_change_lab.approval import bind_approval, bound_versions, final_guard, verify_binding
 from decision_change_lab.common import ContractError
 from decision_change_lab.core import FactStore
 
@@ -178,3 +178,60 @@ def test_binding_retains_evidence_after_input_mutation(scenario):
     assert verify_binding(binding, scenario, store, "2026-01-15T08:01:00Z") == [
         "source_versions_changed"
     ]
+
+
+def test_final_guard_allows_valid_binding_at_boundaries(scenario):
+    store = store_for(scenario)
+    binding = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:00Z")
+    assert final_guard(binding, scenario, store, "2026-01-15T08:30:00Z") == (True, ())
+    assert final_guard(binding, scenario, store, "2026-01-15T08:59:59Z")[0]
+    assert final_guard(binding, scenario, store, "2026-01-15T09:00:00Z") == (
+        False,
+        ("approval_expired",),
+    )
+
+
+def test_final_guard_rejects_inactive_actor_at_observation_cutoff(scenario):
+    inactive = actor_fact(scenario, "2026-01-15T08:10:00Z")
+    inactive["payload"]["active"] = False
+    store = store_for(scenario, [inactive])
+    binding = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:05:00Z")
+    assert final_guard(binding, scenario, store, "2026-01-15T08:09:59Z")[0]
+    allowed, reasons = final_guard(binding, scenario, store, "2026-01-15T08:10:00Z")
+    assert not allowed
+    assert set(reasons) == {"source_versions_changed", "actor_inactive"}
+
+
+def test_final_guard_uses_visible_policy_limit_over_baseline(scenario):
+    new = policy_fact(scenario, "2026-01-15T08:10:00Z")
+    new["payload"]["max_amendment_total_minor"] = 9999  # total is 10 * 1000
+    store = store_for(scenario, [new])
+    binding = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:05:00Z")
+    assert final_guard(binding, scenario, store, "2026-01-15T08:09:59Z")[0]
+    allowed, reasons = final_guard(binding, scenario, store, "2026-01-15T08:10:00Z")
+    assert not allowed and "policy_limit_exceeded" in reasons
+
+
+def test_final_guard_limit_is_inclusive_and_exact(scenario):
+    scenario["policy"]["max_amendment_total_minor"] = 10000
+    store = store_for(scenario)
+    binding = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:00Z")
+    assert final_guard(binding, scenario, store, "2026-01-15T08:01:00Z")[0]
+    scenario["policy"]["max_amendment_total_minor"] = 9999
+    assert final_guard(binding, scenario, store, "2026-01-15T08:01:00Z")[1] == (
+        "policy_limit_exceeded",
+    )
+
+
+def test_final_guard_denies_tampered_binding_and_payload_change(scenario):
+    store = store_for(scenario)
+    binding = dict(bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:00Z"))
+    binding["actor_id"] = "OTHER"
+    assert final_guard(binding, scenario, store, "2026-01-15T08:02:00Z") == (
+        False,
+        ("binding_tampered",),
+    )
+    good = bind_approval(scenario, "DEC-A", store, "2026-01-15T08:01:00Z")
+    scenario["decisions"][0]["amendment"]["quantity"] = 11
+    allowed, reasons = final_guard(good, scenario, store, "2026-01-15T08:02:00Z")
+    assert not allowed and "payload_mismatch" in reasons

@@ -96,3 +96,33 @@ def verify_binding(binding, scenario, store, at):
     if digest(bound_versions(scenario, decision, store, at)) != binding["source_digest"]:
         reasons.append("source_versions_changed")
     return reasons
+
+
+def _current(store, at, kind, entity_id, baseline):
+    """Visible fact payload for an actor/policy; the baseline is only a fallback."""
+    for row in store.visible(at):
+        if (row["entity_kind"], row["entity_id"]) == (kind, entity_id):
+            return row["payload"]
+    return baseline
+
+
+def final_guard(binding, scenario, store, at):
+    """Deterministic pre-dispatch decision; returns (allowed, reasons).
+
+    Allows only when the binding verifies, the currently visible actor is active and
+    the amendment total (integer minor units) is within the current policy limit.
+    It does not dispatch or record any effect.
+    """
+    reasons = list(verify_binding(binding, scenario, store, at))
+    if "binding_tampered" in reasons:
+        return False, tuple(reasons)
+    decision = _decision(scenario, binding["decision_id"])
+    baseline = next((a for a in scenario["actors"] if a["actor_id"] == binding["actor_id"]), None)
+    actor = _current(store, at, "actor", binding["actor_id"], baseline)
+    if not actor or actor.get("active") is not True:
+        reasons.append("actor_inactive")
+    policy = _current(store, at, "policy", binding["policy_id"], scenario["policy"])
+    amendment = decision["amendment"]
+    if amendment["quantity"] * amendment["unit_price_minor"] > policy["max_amendment_total_minor"]:
+        reasons.append("policy_limit_exceeded")
+    return not reasons, tuple(reasons)
