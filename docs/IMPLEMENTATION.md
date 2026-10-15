@@ -40,7 +40,15 @@ Five regression cases failed against the original draft: actor and policy rebind
 
 The unkeyed digests detect accidental inconsistency; anyone able to rewrite a record can recompute them. Read-only mappings prevent mutation through the returned Python interface, not hostile same-process code. Input fixtures are trusted grant-time records, not an authenticated issuance ledger. The helper does not prevent a caller from inventing a replacement scenario or approval ID.
 
-Remaining limits: no durable approval/revision ledger, revocation, benign revalidation proofs, final execution guard, dispatch, idempotency receipts or replay. No serialization or restart guarantee is claimed for these local mapping views. FR-04 and M2 remain partial.
+Remaining limits: no durable approval/revision ledger, revocation, benign revalidation proofs, dispatch, idempotency receipts or replay. No serialization or restart guarantee is claimed for these local mapping views. FR-04 and M2 remain partial.
+
+## M2 increment: final execution guard (FR-04, second part)
+
+`final_guard` in [approval.py](../src/decision_change_lab/approval.py) returns `(allowed, reasons)` for a binding at a given time. It runs `verify_binding`, then checks the currently visible actor is active and the amendment total (`quantity * unit_price_minor`, integer minor units) does not exceed the currently visible policy's `max_amendment_total_minor` (inclusive). Visible actor/policy facts take precedence; scenario baselines are only a fallback. It reports `actor_inactive` and `policy_limit_exceeded` in addition to the verification reasons; a tampered binding short-circuits to `binding_tampered`. It does not dispatch or record effects.
+
+Five tests in [test_approval.py](../tests/test_approval.py) cover the valid path and the half-open expiry boundary, an inactive actor and a lowered policy limit one second before versus at observation, the inclusive limit, and tampered binding or changed payload. Commands run: `uv run --locked ruff format src tests`, `uv run --locked ruff check src tests`, `uv run --locked pytest -q` — lint/format clean, **40 passed**. The documentation check and installed-wheel verification are left to the trusted post steps. These are synthetic component checks.
+
+Limits: the guard is a pure check with no persistence, restart behavior, revocation, fact change during dispatch, or receipts. Role/scope of the actor is not evaluated beyond `active`.
 
 ## Relationship to the full plan
 
